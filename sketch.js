@@ -12,7 +12,16 @@ let dbRef = firebase.database().ref("psora/canvas");
 
 const SVG_W = 411;
 const SVG_H = 640;
-let SVG_X, SVG_Y;
+const BTN_AREA = 80;
+let SVG_X, SVG_Y, svgScale, dispW, dispH;
+
+function computeLayout() {
+  svgScale = min(1, windowWidth / SVG_W, (windowHeight - BTN_AREA) / SVG_H);
+  dispW = SVG_W * svgScale;
+  dispH = SVG_H * svgScale;
+  SVG_X = (windowWidth - dispW) / 2;
+  SVG_Y = (windowHeight - dispH - BTN_AREA) / 2;
+}
 
 let drawColor = [240, 84, 35, 100];
 let lastPrinted = 0;
@@ -29,8 +38,7 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(255);
-  SVG_X = (windowWidth - SVG_W) / 2;
-  SVG_Y = (windowHeight - SVG_H) / 2;
+  computeLayout();
 
   let svgString = bodyLines.join("\n");
   let blob = new Blob([svgString], { type: "image/svg+xml" });
@@ -41,12 +49,12 @@ function setup() {
   drawLayer.clear();
 
   clearBtn = createButton("Clear");
-  clearBtn.position(SVG_X, SVG_Y + SVG_H + 24);
+  clearBtn.position(SVG_X, SVG_Y + dispH + 24);
   styleButton(clearBtn, "#fff", "#F05423");
   clearBtn.mousePressed(clearCanvas);
 
   confirmBtn = createButton("Confirm");
-  confirmBtn.position(SVG_X + 130, SVG_Y + SVG_H + 24);
+  confirmBtn.position(SVG_X + 130, SVG_Y + dispH + 24);
   styleButton(confirmBtn, "#F05423", "#fff");
   confirmBtn.mousePressed(confirmDrawing);
 }
@@ -54,15 +62,15 @@ function setup() {
 function draw() {
   background(255);
   if (bodyImg && bodyImg.width > 0) {
-    image(bodyImg, SVG_X, SVG_Y, SVG_W, SVG_H);
+    image(bodyImg, SVG_X, SVG_Y, dispW, dispH);
   }
-  image(drawLayer, SVG_X, SVG_Y);
+  image(drawLayer, SVG_X, SVG_Y, dispW, dispH);
 
   if (mouseIsPressed) {
-    let lx = pmouseX - SVG_X;
-    let ly = pmouseY - SVG_Y;
-    let mx = mouseX - SVG_X;
-    let my = mouseY - SVG_Y;
+    let lx = (pmouseX - SVG_X) / svgScale;
+    let ly = (pmouseY - SVG_Y) / svgScale;
+    let mx = (mouseX - SVG_X) / svgScale;
+    let my = (mouseY - SVG_Y) / svgScale;
     if (mx >= 0 && mx <= SVG_W && my >= 0 && my <= SVG_H) {
       drawLayer.noStroke();
       drawLayer.fill(drawColor);
@@ -149,10 +157,9 @@ function confirmDrawing() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  SVG_X = (windowWidth - SVG_W) / 2;
-  SVG_Y = (windowHeight - SVG_H) / 2;
-  clearBtn.position(SVG_X, SVG_Y + SVG_H + 24);
-  confirmBtn.position(SVG_X + 130, SVG_Y + SVG_H + 24);
+  computeLayout();
+  clearBtn.position(SVG_X, SVG_Y + dispH + 24);
+  confirmBtn.position(SVG_X + 130, SVG_Y + dispH + 24);
 }
 
 function styleButton(btn, bg, textCol) {

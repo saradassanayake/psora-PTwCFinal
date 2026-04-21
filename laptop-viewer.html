@@ -171,6 +171,19 @@
       font-weight: 400;
     }
 
+    #slideshow-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #fff;
+      transition: opacity 0.8s ease;
+    }
+
+    #slideshow-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .waiting-overlay {
       position: fixed;
       inset: 0;
@@ -212,6 +225,8 @@
   </style>
 </head>
 <body>
+
+  <div id="slideshow-overlay"></div>
 
   <div class="waiting-overlay" id="waitingOverlay">
     <div class="waiting-text">Waiting for input<span class="waiting-dots"></span></div>
@@ -257,6 +272,16 @@
       </div>
     </div>
   </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="sketch1.js"></script>
+  <script>
+    function showViewer() {
+      const overlay = document.getElementById('slideshow-overlay');
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.remove(), 800);
+    }
+  </script>
 
   <script type="module">
     /* ── FIREBASE ── */

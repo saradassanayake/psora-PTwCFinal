@@ -147,6 +147,14 @@ function confirmDrawing() {
   }, 2000);
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  SVG_X = (windowWidth - SVG_W) / 2;
+  SVG_Y = (windowHeight - SVG_H) / 2;
+  clearBtn.position(SVG_X, SVG_Y + SVG_H + 24);
+  confirmBtn.position(SVG_X + 130, SVG_Y + SVG_H + 24);
+}
+
 function styleButton(btn, bg, textCol) {
   btn.style("font-family", "sans-serif");
   btn.style("font-size", "15px");

@@ -21,16 +21,22 @@ let drawColor = [240, 84, 35, 100];
 let lastPrinted = 0;
 let lastBroadcast = 0;
 let bodyImg;
+let bodyLines;
 let drawLayer;
 let clearBtn, confirmBtn;
 
 function preload() {
-  bodyImg = loadImage("psora-head-svg.svg");
+  bodyLines = loadStrings("psora-head-svg.svg");
 }
 
 function setup() {
   createCanvas(PAGE_W, PAGE_H);
   background(255);
+
+  let svgString = bodyLines.join("\n");
+  let blob = new Blob([svgString], { type: "image/svg+xml" });
+  let url = URL.createObjectURL(blob);
+  bodyImg = loadImage(url);
 
   drawLayer = createGraphics(SVG_W, SVG_H);
   drawLayer.clear();

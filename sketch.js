@@ -14,8 +14,8 @@ const PAGE_W = 1440;
 const PAGE_H = 1024;
 const SVG_W = 411;
 const SVG_H = 640;
-const SVG_X = (PAGE_W - SVG_W) / 2; // 514.5
-const SVG_Y = (PAGE_H - SVG_H) / 2; // 192
+const SVG_X = 632;
+const SVG_Y = 202;
 
 let drawColor = [240, 84, 35, 100];
 let lastPrinted = 0;
@@ -42,22 +42,22 @@ function setup() {
   drawLayer.clear();
 
   clearBtn = createButton("Clear");
-  clearBtn.position(PAGE_W - 280, PAGE_H - 70);
+  clearBtn.position(SVG_X, SVG_Y + SVG_H + 24);
   styleButton(clearBtn, "#fff", "#F05423");
   clearBtn.mousePressed(clearCanvas);
 
   confirmBtn = createButton("Confirm");
-  confirmBtn.position(PAGE_W - 160, PAGE_H - 70);
+  confirmBtn.position(SVG_X + 130, SVG_Y + SVG_H + 24);
   styleButton(confirmBtn, "#F05423", "#fff");
   confirmBtn.mousePressed(confirmDrawing);
 }
 
 function draw() {
   background(255);
-  image(drawLayer, SVG_X, SVG_Y);
   if (bodyImg && bodyImg.width > 0) {
     image(bodyImg, SVG_X, SVG_Y, SVG_W, SVG_H);
   }
+  image(drawLayer, SVG_X, SVG_Y);
 
   if (mouseIsPressed) {
     let lx = pmouseX - SVG_X;

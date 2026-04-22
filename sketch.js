@@ -63,9 +63,9 @@ function draw() {
 
   fill(180);
   noStroke();
-  textAlign(CENTER, TOP);
+  textAlign(RIGHT, TOP);
   textSize(11);
-  text("Currently Optimized for Psoriatic Patients with Head/Scalp/Face Inflammation", width / 2, 16);
+  text("Currently Optimized for Psoriatic Patients with Head/Scalp/Face Inflammation", width - 16, 16);
 
   if (mouseIsPressed) {
     let lx = (pmouseX - SVG_X) / svgScale;

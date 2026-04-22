@@ -1,4 +1,4 @@
-/* firebase */
+/* firebase code snippet */
 firebase.initializeApp({
   apiKey: "AIzaSyDtbPICrsVz5mBs7XIuGdGJ4WqELORQElk",
   authDomain: "psora-9110d.firebaseapp.com",
@@ -31,18 +31,20 @@ let bodyLines;
 let drawLayer;
 let clearBtn;
 
+/* loads the head/face outline svg for the drawing component/view, allows user to draw over it since it is set as a background */
+
 function preload() {
   bodyLines = loadStrings("psora-head-svg.svg");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(255);
+  background(255); // white
   computeLayout();
 
   let svgString = bodyLines.join("\n");
-  let blob = new Blob([svgString], { type: "image/svg+xml" });
-  let url = URL.createObjectURL(blob);
+  let svgFile = new Blob([svgString], { type: "image/svg+xml" });
+  let url = URL.createObjectURL(svgFile);
   bodyImg = loadImage(url);
 
   drawLayer = createGraphics(SVG_W, SVG_H);

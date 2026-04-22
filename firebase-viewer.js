@@ -16,17 +16,19 @@ const appFb = initializeApp(firebaseConfig);
 const db = getDatabase(appFb);
 const canvasRef = ref(db, 'psora/canvas');
 
+
+//Information/data elements:
 const pctNum = document.getElementById('pctNum');
 const stressNum = document.getElementById('stressNum');
 const stressLabel = document.getElementById('stressLabel');
-const lastUpdateEl = document.getElementById('lastUpdate');
-
+//Level labels
 const stressLabels = { 0:'', 1:'Minimal', 2:'Mild', 3:'Moderate', 4:'High', 5:'Severe' };
 const stressColors = {
   0:'var(--muted)', 1:'var(--level-1)', 2:'var(--level-2)',
   3:'var(--level-3)', 4:'var(--level-4)', 5:'var(--level-5)'
 };
 
+//Empty if no input
 let firstDataReceived = false;
 
 function update(data) {
@@ -43,10 +45,6 @@ function update(data) {
   stressNum.style.color = stressColors[level];
   stressLabel.textContent = stressLabels[level];
 
-  if (data.timestamp) {
-    const t = new Date(data.timestamp);
-    lastUpdateEl.textContent = `Last update: ${t.toLocaleTimeString()}`;
-  }
 }
 
 onValue(canvasRef, (snapshot) => {

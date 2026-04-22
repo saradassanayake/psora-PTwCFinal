@@ -29,7 +29,7 @@ let lastBroadcast = 0;
 let bodyImg;
 let bodyLines;
 let drawLayer;
-let clearBtn, confirmBtn;
+let clearBtn;
 
 function preload() {
   bodyLines = loadStrings("psora-head-svg.svg");
@@ -49,14 +49,9 @@ function setup() {
   drawLayer.clear();
 
   clearBtn = createButton("Clear");
-  clearBtn.position(SVG_X, SVG_Y + dispH + 24);
+  clearBtn.position(SVG_X + dispW / 2 - 50, SVG_Y + dispH + 24);
   styleButton(clearBtn, "#fff", "#F05423");
   clearBtn.mousePressed(clearCanvas);
-
-  confirmBtn = createButton("Confirm");
-  confirmBtn.position(SVG_X + 130, SVG_Y + dispH + 24);
-  styleButton(confirmBtn, "#F05423", "#fff");
-  confirmBtn.mousePressed(confirmDrawing);
 }
 
 function draw() {
@@ -127,39 +122,11 @@ function clearCanvas() {
   });
 }
 
-function confirmDrawing() {
-  drawLayer.loadPixels();
-  let filled = 0;
-  let total = SVG_W * SVG_H;
-  for (let i = 3; i < drawLayer.pixels.length; i += 4) {
-    if (drawLayer.pixels[i] > 10) filled++;
-  }
-  let pct = (filled / total) * 100;
-  let level = min(5, max(1, ceil(pct / 6)));
-  if (pct < 0.5) level = 0;
-  print("Confirmed — " + nf(pct, 1, 1) + "% covered, stress level: " + level);
-
-  dbRef.set({
-    percentage: pct,
-    stressLevel: level,
-    timestamp: Date.now(),
-    thumbnail: document.querySelector("canvas").toDataURL("image/jpeg", 0.3),
-    confirmed: true,
-  });
-
-  confirmBtn.html("Sent!");
-  confirmBtn.style("opacity", "0.6");
-  setTimeout(() => {
-    confirmBtn.html("Confirm");
-    confirmBtn.style("opacity", "1");
-  }, 2000);
-}
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   computeLayout();
-  clearBtn.position(SVG_X, SVG_Y + dispH + 24);
-  confirmBtn.position(SVG_X + 130, SVG_Y + dispH + 24);
+  clearBtn.position(SVG_X + dispW / 2 - 50, SVG_Y + dispH + 24);
 }
 
 function styleButton(btn, bg, textCol) {

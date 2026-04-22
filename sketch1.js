@@ -137,15 +137,18 @@ function drawSlide7() {
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
-  textSize(20);
+  let pw = width * 0.72;
+  textLeading(38);
+  textSize(22);
   text(
-    "Current stress management tools often ask you to\nrate your stress from 1-5. Individuals with psoriatic\nconditions can't simply condense their stress into a\nnumber, given it shows up physically on their body.",
-    width / 2,
-    height / 2 - 40
+    "Current stress management tools often ask you to rate your stress from 1-5. Individuals with psoriatic conditions can't simply condense their stress into a number, given it shows up physically on their body.",
+    (width - pw) / 2,
+    height / 2 - 110,
+    pw
   );
 
   if (millis() - slideStartTime >= 5000) {
-    textSize(20);
+    textSize(22);
     text("But what if they could...", width / 2, height / 2 + 80);
   }
 

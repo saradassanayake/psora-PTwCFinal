@@ -281,8 +281,15 @@
   </main>
 
   <script>
-    window.currentStressLevel = 0;
+    window.currentStressLevel = 0; //Default is 0 (since nothing is drawn yet)
 
+    // Based on asking different llm models (claude, gemini, chatgpt) and referncing research on how stress should be managed:
+    // 1 (little to no Stress)
+    // 2 (some stress)
+    //3 (mild/moderate stress)
+    //4 (moderately high stress levels)
+    //5 (very high stress levels)
+    // The orders within the array act as a guideline for how tasks shoudl eb reordered/repositioned
     var sortOrders = {
       1: [5, 4, 3, 2, 1],
       2: [4, 5, 3, 1, 2],
@@ -305,7 +312,7 @@
         });
       }
 
-      // Sort by where each difficulty falls in the order list
+      // Sorting:
       tasks.sort(function(a, b) {
         var posA = order.indexOf(a.diff);
         var posB = order.indexOf(b.diff);
@@ -327,81 +334,6 @@
     }
   </script>
 
-  <script type="module">
-    /* ── FIREBASE ── */
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDtbPICrsVz5mBs7XIuGdGJ4WqELORQElk",
-      authDomain: "psora-9110d.firebaseapp.com",
-      databaseURL: "https://psora-9110d-default-rtdb.firebaseio.com",
-      projectId: "psora-9110d",
-      storageBucket: "psora-9110d.firebasestorage.app",
-      messagingSenderId: "671697488457",
-      appId: "1:671697488457:web:875c8978b37473782acd98",
-      measurementId: "G-MYWGV7MS1S"
-    };
-
-    const appFb = initializeApp(firebaseConfig);
-    const db = getDatabase(appFb);
-    const canvasRef = ref(db, 'psora/canvas');
-
-    /* ── ELEMENTS ── */
-    const pctNum = document.getElementById('pctNum');
-    const stressNum = document.getElementById('stressNum');
-    const stressLabel = document.getElementById('stressLabel');
-    const stressBar = document.getElementById('stressBar');
-    const previewWrap = document.getElementById('previewWrap');
-    const waitingOverlay = document.getElementById('waitingOverlay');
-    const lastUpdateEl = document.getElementById('lastUpdate');
-
-    const stressLabels = { 0:'', 1:'Minimal', 2:'Mild', 3:'Moderate', 4:'High', 5:'Severe' };
-    const stressColors = {
-      0:'var(--muted)', 1:'var(--level-1)', 2:'var(--level-2)',
-      3:'var(--level-3)', 4:'var(--level-4)', 5:'var(--level-5)'
-    };
-
-    let firstDataReceived = false;
-
-    function update(data) {
-      if (!data) return;
-
-      if (!firstDataReceived) {
-        firstDataReceived = true;
-        waitingOverlay.classList.add('hidden');
-      }
-
-      const pct = data.percentage || 0;
-      pctNum.textContent = pct.toFixed(1);
-
-      const level = data.stressLevel || 0;
-      window.currentStressLevel = level;
-      stressNum.textContent = level === 0 ? '—' : level;
-      stressNum.style.color = stressColors[level];
-      stressLabel.textContent = stressLabels[level];
-
-      stressBar.querySelectorAll('.stress-bar-segment').forEach(seg => {
-        const segLevel = parseInt(seg.dataset.level);
-        seg.style.background = segLevel <= level ? stressColors[segLevel] : 'var(--border)';
-      });
-
-      if (data.thumbnail) {
-        previewWrap.innerHTML = `<img src="${data.thumbnail}" alt="Drawing preview">`;
-      } else {
-        previewWrap.innerHTML = `<span class="preview-placeholder">canvas cleared</span>`;
-      }
-
-      if (data.timestamp) {
-        const t = new Date(data.timestamp);
-        lastUpdateEl.textContent = `Last update: ${t.toLocaleTimeString()}`;
-      }
-    }
-
-    /* ── LISTEN FOR CHANGES ── */
-    onValue(canvasRef, (snapshot) => {
-      update(snapshot.val());
-    });
-  </script>
+  <script type="module" src="firebase-viewer.js"></script>
 </body>
 </html>

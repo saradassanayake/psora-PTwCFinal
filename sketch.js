@@ -26,22 +26,24 @@ function computeLayout() {
 let drawColor = [240, 84, 35, 100];
 let lastPrinted = 0;
 let lastBroadcast = 0;
+let bodyImg;
+let bodyLines;
 let drawLayer;
 let clearBtn;
 
-function positionHeadImg() {
-  var img = document.getElementById('headSvg');
-  img.style.left   = SVG_X + 'px';
-  img.style.top    = SVG_Y + 'px';
-  img.style.width  = dispW + 'px';
-  img.style.height = dispH + 'px';
-  img.style.display = 'block';
+function preload() {
+  bodyLines = loadStrings("psora-head-svg.svg");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  background(255);
   computeLayout();
-  positionHeadImg();
+
+  let svgString = bodyLines.join("\n");
+  let blob = new Blob([svgString], { type: "image/svg+xml" });
+  let url = URL.createObjectURL(blob);
+  bodyImg = loadImage(url);
 
   drawLayer = createGraphics(SVG_W, SVG_H);
   drawLayer.clear();
@@ -53,7 +55,10 @@ function setup() {
 }
 
 function draw() {
-  clear();
+  background(255);
+  if (bodyImg && bodyImg.width > 0) {
+    image(bodyImg, SVG_X, SVG_Y, dispW, dispH);
+  }
   image(drawLayer, SVG_X, SVG_Y, dispW, dispH);
 
   if (mouseIsPressed) {
@@ -121,7 +126,6 @@ function clearCanvas() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   computeLayout();
-  positionHeadImg();
   clearBtn.position(SVG_X + dispW / 2 - 50, SVG_Y + dispH + 24);
 }
 

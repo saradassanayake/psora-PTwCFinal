@@ -1,7 +1,8 @@
 let currentSlide = 1;
 let slideStartTime = 0;
+let defLines, defImg;
 
-// ─── SLIDE 2 PHRASES ─────────────────────────────────────────
+// Assumptions for slide 2
 let phrases = [
   { text: '"Ouch. What\'s that on your hand?"',  px: 0.16, py: 0.47 },
   { text: '"Are you ok?"',                        px: 0.06, py: 0.30 },
@@ -16,27 +17,33 @@ let phrases = [
   { text: '"Do you have a skin disease?"',        px: 0.40, py: 0.55 },
 ];
 
-let PHRASE_INTERVAL = 100;
+let PHRASE_INTERVAL = 1000; //how fast each phrase is animated form the previous one
 
-// ─── SLIDE 5 & 6 TEXT ────────────────────────────────────────
+// SLIDES 5 & 6 TEXT
 let slide5Line1 = "2% of the global population live with psoriasis";
 let slide5Line3 = "60% of people with psoriasis reported their disease to be a large problem in their everyday life.";
 
-let slide6Line1 = "The prevalence of psychological comorbidities in patients with psoriasis is significantly higher than in the general population. Stress, anxiety, and depression are both triggers and consequences of the condition.";
-let slide6Line2 = "Patient-centered technology that acknowledges this cycle can transform how people with psoriasis manage their daily lives—shifting from reactive treatment to proactive, holistic self-care.";
+let slide6Line1 = "The prevalence of psychological stress is higher in psoriatic patients than in the controls";
+let slide6Line2 = "The prevalence of depression can be as high as 74.6% in individuals with psoriasis";
 
-// ─── SETUP ───────────────────────────────────────────────────
+function preload() {
+  defLines = loadStrings('Definition svg.svg');
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   textFont('Satoshi');
-  slideStartTime = millis();
+
+  let blob = new Blob([defLines.join('\n')], { type: 'image/svg+xml' });
+  defImg = loadImage(URL.createObjectURL(blob));
+
+  slideStartTime = millis(); //time
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-// ─── DRAW ────────────────────────────────────────────────────
 function draw() {
   switch (currentSlide) {
     case 1: drawSlide1(); break;
@@ -49,7 +56,7 @@ function draw() {
   }
 }
 
-// ─── SLIDE 1: Welcome ────────────────────────────────────────
+// Startup Screen/Welcome
 function drawSlide1() {
   background(255);
   fill(0);
@@ -59,7 +66,7 @@ function drawSlide1() {
   text("Welcome to Psora. Click anywhere to begin the experience.", width / 2, height / 2);
 }
 
-// ─── SLIDE 2: Phrases ────────────────────────────────────────
+// Slide 2
 function drawSlide2() {
   background(255);
   fill(0);
@@ -82,7 +89,7 @@ function drawSlide2() {
   }
 }
 
-// ─── SLIDE 3: "skin disease" ─────────────────────────────────
+// Slide 3
 function drawSlide3() {
   background(255);
   fill(0);
@@ -102,29 +109,16 @@ function drawSlide3() {
   }
 }
 
-// ─── SLIDE 4: Definition ─────────────────────────────────────
+// Slide 4
 function drawSlide4() {
   background(255);
-  fill(0);
-  noStroke();
-  textAlign(LEFT, TOP);
-  textSize(width * 0.016);
-  let prefix = '"Do you have a ';
-  let prefixW = textWidth(prefix);
-  let sdX = 0.20 * width + prefixW;
-  let sdY = 0.48 * height;
-
-  fill(255);
-  text("skin disease", sdX, sdY);
-  fill(0);
-
-  let lineH = (width * 0.016) * 1.6;
-  let defY = sdY + lineH * 1.5;
-  fill(240, 84, 35);
-  text("psora", sdX, defY);
-  fill(0);
-  text("• noun", sdX + 38, defY);
-  text("itch or scab; a cutaneous or skin disease,\nespecially psoriasis, scabies, or mange.", sdX, defY + lineH);
+  if (defImg && defImg.width > 0) {
+    let svgW = 732;
+    let svgH = 187;
+    let x = (width - svgW) / 2;
+    let y = (height - svgH) / 2;
+    image(defImg, x, y, svgW, svgH);
+  }
   if (millis() - slideStartTime >= 5000) {
     goToSlide(5);
   }

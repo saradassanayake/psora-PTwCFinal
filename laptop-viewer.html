@@ -119,57 +119,66 @@
       transition: background 0.4s ease;
     }
 
-    .preview-card {
-      grid-column: 1 / -1;
-      display: flex;
-      gap: 32px;
-      align-items: center;
-    }
+    .task-card { grid-column: 1 / -1; }
 
-    .preview-image-wrap {
-      width: 280px;
-      height: 280px;
-      flex-shrink: 0;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-      background: #fff;
+    .task-group {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
     }
 
-    .preview-image-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    .task-group:last-child { border-bottom: none; }
 
-    .preview-placeholder {
-      color: var(--border);
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    .preview-details { flex: 1; }
-
-    .preview-details h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: 28px;
-      font-weight: 400;
-      margin-bottom: 12px;
-    }
-
-    .preview-details p {
+    .task-input {
+      flex: 1;
+      font-family: 'DM Sans', sans-serif;
       font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
       font-weight: 300;
-      max-width: 440px;
+      color: var(--text);
+      border: none;
+      outline: none;
+      background: transparent;
     }
 
-    .last-update {
-      margin-top: 16px;
-      font-size: 12px;
-      color: var(--border);
-      font-weight: 400;
+    .task-input::placeholder { color: var(--border); font-style: italic; }
+
+    .difficulty-input {
+      width: 110px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      outline: none;
+      background: transparent;
+      text-align: center;
     }
+
+    .difficulty-input::placeholder { color: var(--border); font-style: italic; }
+
+    .task-card-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    #psoraSort {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 12px 28px;
+      background: #F05423;
+      color: #fff;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    #psoraSort:hover { opacity: 0.85; }
 
     .waiting-overlay {
       position: fixed;
@@ -241,22 +250,68 @@
       </div>
     </div>
 
-    <div class="card preview-card">
-      <div class="preview-image-wrap" id="previewWrap">
-        <span class="preview-placeholder">no drawing yet</span>
+    <div class="card task-card">
+      <div class="card-label">Task Planner</div>
+      <div id="taskList">
+        <div class="task-group">
+          <input class="task-input" type="text" placeholder="Click to type a task">
+          <input class="difficulty-input" type="number" min="1" max="5" placeholder="Difficulty 1–5">
+        </div>
+        <div class="task-group">
+          <input class="task-input" type="text" placeholder="Click to type a task">
+          <input class="difficulty-input" type="number" min="1" max="5" placeholder="Difficulty 1–5">
+        </div>
+        <div class="task-group">
+          <input class="task-input" type="text" placeholder="Click to type a task">
+          <input class="difficulty-input" type="number" min="1" max="5" placeholder="Difficulty 1–5">
+        </div>
+        <div class="task-group">
+          <input class="task-input" type="text" placeholder="Click to type a task">
+          <input class="difficulty-input" type="number" min="1" max="5" placeholder="Difficulty 1–5">
+        </div>
+        <div class="task-group">
+          <input class="task-input" type="text" placeholder="Click to type a task">
+          <input class="difficulty-input" type="number" min="1" max="5" placeholder="Difficulty 1–5">
+        </div>
       </div>
-      <div class="preview-details">
-        <h2>Live Canvas</h2>
-        <p>
-          As the user draws areas affected by psoriasis, coverage translates
-          into a stress level from 1 to 5. Greater surface coverage suggests higher
-          stress-related flare intensity, which informs how daily tasks are
-          reprioritized.
-        </p>
-        <div class="last-update" id="lastUpdate"></div>
+      <div class="task-card-footer">
+        <button id="psoraSort">Psora Sort</button>
       </div>
     </div>
   </main>
+
+  <script>
+    window.currentStressLevel = 0;
+
+    const sortOrders = {
+      1: [5, 4, 3, 2, 1],
+      2: [4, 5, 3, 1, 2],
+      3: [3, 1, 4, 2, 5],
+      4: [1, 2, 3, 4, 5],
+      5: [1, 2, 3, 4, 5]
+    };
+
+    document.getElementById('psoraSort').addEventListener('click', () => {
+      const order = sortOrders[window.currentStressLevel] || [1, 2, 3, 4, 5];
+      const list = document.getElementById('taskList');
+      const groups = Array.from(list.querySelectorAll('.task-group'));
+      groups.sort((a, b) => {
+        const da = parseInt(a.querySelector('.difficulty-input').value) || 0;
+        const db = parseInt(b.querySelector('.difficulty-input').value) || 0;
+        const pa = da > 0 ? order.indexOf(da) : 999;
+        const pb = db > 0 ? order.indexOf(db) : 999;
+        return (pa === -1 ? 999 : pa) - (pb === -1 ? 999 : pb);
+      });
+      groups.forEach(g => list.appendChild(g));
+    });
+
+    document.querySelectorAll('.difficulty-input').forEach(input => {
+      input.addEventListener('change', () => {
+        const v = parseInt(input.value);
+        input.value = isNaN(v) ? '' : Math.min(5, Math.max(1, v));
+      });
+    });
+  </script>
 
   <script type="module">
     /* ── FIREBASE ── */
@@ -307,6 +362,7 @@
       pctNum.textContent = pct.toFixed(1);
 
       const level = data.stressLevel || 0;
+      window.currentStressLevel = level;
       stressNum.textContent = level === 0 ? '—' : level;
       stressNum.style.color = stressColors[level];
       stressLabel.textContent = stressLabels[level];

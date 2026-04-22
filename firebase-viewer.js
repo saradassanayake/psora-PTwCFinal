@@ -19,8 +19,6 @@ const canvasRef = ref(db, 'psora/canvas');
 const pctNum = document.getElementById('pctNum');
 const stressNum = document.getElementById('stressNum');
 const stressLabel = document.getElementById('stressLabel');
-const stressBar = document.getElementById('stressBar');
-const waitingOverlay = document.getElementById('waitingOverlay');
 const lastUpdateEl = document.getElementById('lastUpdate');
 
 const stressLabels = { 0:'', 1:'Minimal', 2:'Mild', 3:'Moderate', 4:'High', 5:'Severe' };
@@ -34,10 +32,7 @@ let firstDataReceived = false;
 function update(data) {
   if (!data) return;
 
-  if (!firstDataReceived) {
-    firstDataReceived = true;
-    waitingOverlay.classList.add('hidden');
-  }
+  if (!firstDataReceived) firstDataReceived = true;
 
   const pct = data.percentage || 0;
   pctNum.textContent = pct.toFixed(1);
@@ -47,11 +42,6 @@ function update(data) {
   stressNum.textContent = level === 0 ? '—' : level;
   stressNum.style.color = stressColors[level];
   stressLabel.textContent = stressLabels[level];
-
-  stressBar.querySelectorAll('.stress-bar-segment').forEach(seg => {
-    const segLevel = parseInt(seg.dataset.level);
-    seg.style.background = segLevel <= level ? stressColors[segLevel] : 'var(--border)';
-  });
 
   if (data.timestamp) {
     const t = new Date(data.timestamp);
